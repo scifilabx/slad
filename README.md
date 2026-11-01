@@ -97,18 +97,6 @@ a signed release with `WERYFIKACJA.md`.
 - Overview: https://scifilabx.org/slad.php
 - Project site: https://scifilabx.org
 
-## Support
-
-SLAD is free and MIT-licensed. There is no paid tier, no token and no
-company behind it. If it saved you time, you can leave a voluntary tip —
-no account, no subscription, nothing to sign up for:
-
-- Bitcoin: `bc1qrsm3kfq6yztxzp54shsruyjvrvf67sukvt869x`
-- Solana: `DhnvhUgD2ZsEJSCrZ4ZhTTX3XKsStC4g81bTSoLLJ2S3`
-
-Tips are voluntary, are not payment for services, and are non-refundable.
-They are not tax-deductible. Nothing changes if you never send anything.
-
 ## Licence
 
 MIT — see [LICENSE](LICENSE).
