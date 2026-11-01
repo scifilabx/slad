@@ -28,7 +28,6 @@ import slad_protokolu as S
 
 WALLET = os.path.join(os.path.expanduser("~"), ".slad", "portfel.json")
 STATE = os.path.join(os.path.expanduser("~"), ".slad", "stan.json")
-ANCHOR = os.path.join(os.path.expanduser("~"), ".slad", "genesis-anchor.json")
 
 
 def sha256_pliku(sciezka: str) -> str:
@@ -43,6 +42,11 @@ def sha256_pliku(sciezka: str) -> str:
 def main() -> int:
     ap = argparse.ArgumentParser(description="Podpisuje wydanie oprogramowania śladem SLAD.")
     ap.add_argument("--repo", required=True, help="URL repozytorium / repository URL")
+    ap.add_argument(
+        "--root", "--korzen", dest="root", default=None,
+        help="CID korzenia, pod który podpiąć ślad. Bez tego tworzony jest "
+             "WŁASNY korzeń (domyślne i zalecane).",
+    )
     ap.add_argument("--wersja", "--version", required=True, dest="wersja",
                     help="oznaczenie wersji, np. 1.0 / version label")
     ap.add_argument("--projekt", "--project", dest="projekt", default=None,
@@ -91,17 +95,28 @@ def main() -> int:
     ipfs = S.IpfsKlient()
     stan = S.StanLokalny.wczytaj_klub_nowy(STATE)
 
-    # 3. rodzic: korzeń zasiewu (jeśli znamy) — ślad wydania wisi pod nim
+    # 3. Rodzic śladu.
+    #
+    # DOMYŚLNIE: własny korzeń. Wydanie należy do Twojego drzewa, nie do
+    # cudzego. Narzędzie NIE podpina się automatycznie pod żaden istniejący
+    # zasiew — to musi być świadoma decyzja przez --root.
+    #
+    # Jeśli podasz --root, ślad wydania wisi pod wskazanym korzeniem
+    # (np. współdzielonym drzewem projektu). Odpowiadasz wtedy za to,
+    # że ten korzeń jest właściwy.
     rodzic = None
-    if os.path.exists(ANCHOR):
-        with open(ANCHOR, "r", encoding="utf-8") as f:
-            rodzic = json.load(f).get("genesis_cid")
-        if rodzic and rodzic not in stan.znane_slady:
+    if args.root:
+        rodzic = args.root
+        if rodzic not in stan.znane_slady:
             try:
                 stan.znane_slady[rodzic] = S.pobierz_slad(ipfs, rodzic)
-                stan.korzen_cid = rodzic
-            except S.SladError:
-                rodzic = None
+            except S.SladError as exc:
+                print(f"błąd: nie mogę pobrać korzenia {rodzic}: {exc}",
+                      file=sys.stderr)
+                return 1
+        print(f"  [i] podpinam pod wskazany korzeń: {rodzic}")
+    else:
+        print("  [i] własny korzeń (brak --root)")
 
     # 4. ślad
     payload = {

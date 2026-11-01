@@ -1,6 +1,6 @@
 # SLAD
 
-Tools for signing software releases with an Ed25519 key.
+Tools for signing **your own** software releases with an Ed25519 key.
 
 No server, no account, no middleman. Users verify the signature locally —
 they do not have to trust the author, GitHub, or anyone else.
@@ -17,8 +17,9 @@ python3 tools/slad_protokolu.py nowy-portfel
 ```
 
 **Write the seed down on paper** — without it the key is lost forever.
+The wallet is created in *your* home directory (`~/.slad/`).
 
-## Sign a release
+## Sign your release
 
 ```bash
 cd <your-repo>
@@ -31,10 +32,25 @@ SLAD_HASLO='password' python3 ../tools/slad_wydanie.py \
 Output: the trace CID plus `WERYFIKACJA.md` with hashes and instructions
 for your users.
 
+### Own root by default
+
+By default the release trace starts **your own tree** — a root signed with
+**your** key. Nothing is attached to anyone else's history.
+
+The tool never looks for, and never reuses, another person's genesis anchor.
+Attaching to a shared tree requires an explicit decision:
+
+```bash
+--root <CID>      # attach under a specific root you trust and mean to join
+```
+
+If you do not pass `--root`, you get your own root. That is the recommended
+default.
+
 ### Preview without publishing
 
 ```bash
-python3 tools/slad_wydanie.py --repo <url> --version 1.0 --bez-ipfs file.zip
+python3 tools/slad_wydanie.py --repo <url> --version 1.0 --dry-run file.zip
 ```
 
 ## Verify (for your users)
@@ -59,6 +75,10 @@ one the author signed — even if it came from a mirror or a third party.
 
 **Does not:** judge whether the software is safe, correct or useful.
 It proves origin, not quality.
+
+**Does not:** protect against malware. A signature proves *who* published a
+file, not that the file is harmless. Verify software the way you verify any
+unknown program.
 
 ## Limitations
 
