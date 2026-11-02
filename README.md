@@ -89,7 +89,7 @@ unknown program.
 
 ## Example
 
-[UNI-CNC-PRO-demo](https://github.com/czerwoney/UNI-CNC-PRO-demo) —
+[UNI-CNC-PRO-demo](https://github.com/scifilabx/UNI-CNC-PRO-demo) —
 a signed release with `WERYFIKACJA.md`.
 
 ## Protocol
